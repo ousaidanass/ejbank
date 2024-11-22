@@ -1,0 +1,9 @@
+**/front/nbproject/
+**/front/public/
+**/front/.cache
+**/target/
+**/deployments/*
+**/nb-configuration.xml
+**/README.md
+**/package-lock.json
+**/.idea
