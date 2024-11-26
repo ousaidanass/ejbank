@@ -1,6 +1,5 @@
 package com.ejbank.api;
 
-import com.ejbank.api.payload.PeoplePayload;
 import com.ejbank.test.TestBeanLocal;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
