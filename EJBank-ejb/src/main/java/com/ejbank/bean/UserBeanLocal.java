@@ -1,4 +1,4 @@
-package com.ejbank.test;
+package com.ejbank.bean;
 
 import com.ejbank.model.UserResponse;
 
