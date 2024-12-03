@@ -1,10 +1,11 @@
 package com.ejbank.bean;
 
-import com.ejbank.model.UserResponse;
+import com.ejbank.dto.UserResponseDto;
+import com.ejbank.exception.TraitementException;
 
 import javax.ejb.Local;
 
 @Local
 public interface UserBeanLocal {
-    UserResponse getUser(int id);
+    UserResponseDto getUser(long id) throws TraitementException;
 }

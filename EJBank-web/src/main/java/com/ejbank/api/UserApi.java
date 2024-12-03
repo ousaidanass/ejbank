@@ -1,7 +1,9 @@
 package com.ejbank.api;
 
-import com.ejbank.model.UserResponse;
+import com.ejbank.dto.UserResponseDto;
 import com.ejbank.bean.UserBeanLocal;
+import com.ejbank.exception.ErrorMessages;
+import com.ejbank.exception.TraitementException;
 
 
 import javax.ejb.EJB;
@@ -18,10 +20,17 @@ import javax.ws.rs.core.MediaType;
 public class UserApi {
 
     @EJB
-    private final UserBeanLocal userBeanLocal;
+    private UserBeanLocal userBeanLocal;
 
-    @GET("/{user_id}")
-    public UserResponse getPeople(@PathParam("user_id") Integer userId) {
-        return userBeanLocal.getUser(userId);
+    @GET
+    @Path("/{user_id}")
+    public UserResponseDto getPeople(@PathParam("user_id") Long userId) {
+        UserResponseDto response = null;
+        try {
+            response = userBeanLocal.getUser(userId);
+            return response;
+        } catch (TraitementException e) {
+            return new UserResponseDto(ErrorMessages.getErrorMessage(e.getCode()));
+        }
     }
 }

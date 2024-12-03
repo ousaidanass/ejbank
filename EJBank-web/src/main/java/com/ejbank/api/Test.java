@@ -25,16 +25,16 @@ public class Test {
         return testBean.test();
     }
     
-    @GET
+/*    @GET
     @Path("/people/{age}")
     public PeoplePayload testPayloadReponse(@PathParam("age") Integer age) {
         return new PeoplePayload("Jean", "Dupont", age);
-    }
+    }*/
     
-    @POST
+/*    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/post")
     public String testPostRequest(PeoplePayload payload) {
         return String.format("%s - %s", payload.getFirstname(), payload.getLastname());
-    }
+    }*/
 }

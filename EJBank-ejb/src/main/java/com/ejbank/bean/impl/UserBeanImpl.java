@@ -1,8 +1,9 @@
 package com.ejbank.bean.impl;
 
 import com.ejbank.bean.UserBeanLocal;
-import com.ejbank.entity.User;
-import com.ejbank.model.UserResponse;
+import com.ejbank.exception.TraitementException;
+import com.ejbank.model.User;
+import com.ejbank.dto.UserResponseDto;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -16,8 +17,11 @@ public class UserBeanImpl implements UserBeanLocal {
     private EntityManager em;
 
     @Override
-    public UserResponse getUser(int id) {
+    public UserResponseDto getUser(long id) throws TraitementException {
         var user = em.find(User.class, id);
-        return new UserResponse(user.getFirstname(), user.getLastname());
+        if (user == null) {
+            throw new TraitementException(1);
+        }
+        return new UserResponseDto(user.getFirstname(), user.getLastname());
     }
 }
