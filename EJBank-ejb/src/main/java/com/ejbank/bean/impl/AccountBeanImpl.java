@@ -3,6 +3,7 @@ package com.ejbank.bean.impl;
 import com.ejbank.bean.AccountBeanLocal;
 import com.ejbank.dto.Account;
 import com.ejbank.dto.AccountsAttachedResponseDto;
+import com.ejbank.dto.AccountsResponceDto;
 import com.ejbank.dto.UserResponseDto;
 import com.ejbank.exception.TraitementException;
 import com.ejbank.model.EjbankUser;
