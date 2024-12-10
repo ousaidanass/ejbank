@@ -32,7 +32,6 @@ public class EjbankTransaction {
     @Column(name = "date")
     private LocalDateTime date;
 
-
-
-
+    public EjbankTransaction() {
+    }
 }

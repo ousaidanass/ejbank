@@ -20,5 +20,6 @@ public class EjbankAccount {
     @Column(name = "balance", precision = 10, scale = 0)
     private BigDecimal balance;
 
-
+    public EjbankAccount() {
+    }
 }

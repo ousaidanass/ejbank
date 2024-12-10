@@ -6,23 +6,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "ejbank_advisor")
-public class EjbankAdvisor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
+@DiscriminatorValue("advisor")
+public class EjbankAdvisor extends EjbankUser{
     @OneToMany(mappedBy = "ejbankAdvisor")
     private Set<EjbankCustomer> ejbankCustomers;
 
     public EjbankAdvisor() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public Set<EjbankCustomer> getEjbankCustomers() {
@@ -36,8 +25,7 @@ public class EjbankAdvisor {
     @Override
     public String toString() {
         return "EjbankAdvisor{" +
-                "id=" + id +
-                ", ejbankCustomers=" + ejbankCustomers +
+                "ejbankCustomers=" + ejbankCustomers +
                 '}';
     }
 }
