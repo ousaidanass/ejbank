@@ -8,4 +8,6 @@ import javax.ejb.Local;
 @Local
 public interface UserBeanLocal {
     UserResponseDto getUser(long id) throws TraitementException;
+
+
 }
