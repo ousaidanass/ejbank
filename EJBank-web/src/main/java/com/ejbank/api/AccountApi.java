@@ -1,6 +1,8 @@
 package com.ejbank.api;
 
+import com.ejbank.bean.AccountBeanLocal;
 import com.ejbank.bean.UserBeanLocal;
+import com.ejbank.dto.AccountsAttachedResponseDto;
 import com.ejbank.dto.UserResponseDto;
 import com.ejbank.exception.ErrorMessages;
 import com.ejbank.exception.TraitementException;
@@ -19,17 +21,21 @@ import javax.ws.rs.core.MediaType;
 public class AccountApi {
 
     @EJB
-    private UserBeanLocal userBeanLocal;
+    private AccountBeanLocal accountBeanLocal;
 
     @GET
-    @Path("/attached/{userid}")
-    public UserResponseDto getPeople(@PathParam("user_id") Long userId) {
-        UserResponseDto response = null;
+    @Path("/attached/{user_id}")
+    public AccountsAttachedResponseDto getAccountsAttached(@PathParam("user_id") Long userId) {
+
+        AccountsAttachedResponseDto accounts = null;
+
         try {
-            response = userBeanLocal.getUser(userId);
-            return response;
+            System.err.println("UserId AccountsAttached: " + userId);
+            accounts = accountBeanLocal.getAccountsAttached(userId);
+            System.err.println("AccountsAttached: " + accounts);
+            return accounts;
         } catch (TraitementException e) {
-            return new UserResponseDto(ErrorMessages.getErrorMessage(e.getCode()));
+            return new AccountsAttachedResponseDto(ErrorMessages.getErrorMessage(e.getCode()));
         }
     }
 }
