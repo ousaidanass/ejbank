@@ -1,30 +1,43 @@
 package com.ejbank.dto;
 
 
+import java.util.List;
+
 public class AccountsAttachedResponseDto {
-
-    private String firstname;
-
-    private String lastname;
+    private List<Account> accounts;
 
     private String error;
 
-    public AccountsAttachedResponseDto(String firstname, String lastname) {
-        this.firstname = firstname;
-        this.lastname = lastname;
+    public AccountsAttachedResponseDto(List<Account> accounts) {
+        this.accounts = accounts;
     }
 
     public AccountsAttachedResponseDto(String error) {
         this.error = error;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public List<Account> getAccounts() {
+        return accounts;
     }
 
-    public String getLastname() {
-        return lastname;
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
     }
 
-    public String getError() {return error;}
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
+
+    @Override
+    public String toString() {
+        return "AccountsAttachedResponseDto{" +
+                "accounts=" + accounts +
+                ", error='" + error + '\'' +
+                '}';
+    }
 }

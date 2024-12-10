@@ -8,7 +8,8 @@ import java.util.Set;
 @Table(name = "ejbank_advisor")
 @DiscriminatorValue("advisor")
 public class EjbankAdvisor extends EjbankUser{
-    @OneToMany(mappedBy = "ejbankAdvisor")
+
+    @OneToMany(mappedBy = "ejbankAdvisor", fetch = FetchType.LAZY)
     private Set<EjbankCustomer> ejbankCustomers;
 
     public EjbankAdvisor() {

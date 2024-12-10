@@ -1,5 +1,6 @@
 package com.ejbank.bean;
 
+import com.ejbank.dto.Account;
 import com.ejbank.dto.AccountsAttachedResponseDto;
 import com.ejbank.dto.AccountsResponceDto;
 import com.ejbank.dto.UserResponseDto;
