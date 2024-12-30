@@ -1,6 +1,7 @@
 package com.ejbank.api;
 
 import com.ejbank.bean.AccountBeanLocal;
+import com.ejbank.dto.AccountDispatchDto;
 import com.ejbank.dto.AccountsAttachedResponseDto;
 import com.ejbank.dto.AccountsResponceDto;
 import com.ejbank.exception.ErrorMessages;
@@ -24,9 +25,9 @@ public class AccountApi {
 
     @GET
     @Path("/attached/{user_id}")
-    public AccountsAttachedResponseDto getAccountsAttached(@PathParam("user_id") Long userId) {
+    public AccountDispatchDto getAccountsAttached(@PathParam("user_id") Long userId) {
 
-        AccountsAttachedResponseDto accounts = null;
+        AccountDispatchDto accounts = null;
 
         try {
             System.err.println("UserId AccountsAttached: " + userId);
@@ -40,9 +41,19 @@ public class AccountApi {
 
     @GET
     @Path("/{user_id}")
-    public AccountsResponceDto getAccounts(@PathParam("user_id") Long userId) {
+    public AccountDispatchDto getAccounts(@PathParam("user_id") Long userId) {
         try {
             return accountBeanLocal.getAccounts(userId);
+        } catch (TraitementException e) {
+            return new AccountsResponceDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
+        }
+    }
+
+    @GET
+    @Path("/all/{user_id}")
+    public AccountDispatchDto getAllAccounts(@PathParam("user_id") Long userId) {
+        try {
+            return accountBeanLocal.getAllAccounts(userId);
         } catch (TraitementException e) {
             return new AccountsResponceDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }

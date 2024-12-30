@@ -2,12 +2,12 @@ package com.ejbank.dto;
 
 import java.math.BigDecimal;
 
-public class AccountResponseDto {
+public class AccountResponseDtoDto implements AccountDispatchDto {
     private long accountId;
     private String accountType;
     private BigDecimal balance;
 
-    public AccountResponseDto(long accountId, String accountType, BigDecimal balance) {
+    public AccountResponseDtoDto(long accountId, String accountType, BigDecimal balance) {
         this.accountId = accountId;
         this.accountType = accountType;
         this.balance = balance;

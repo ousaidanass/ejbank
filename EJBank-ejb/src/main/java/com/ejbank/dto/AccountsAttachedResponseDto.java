@@ -3,12 +3,12 @@ package com.ejbank.dto;
 
 import java.util.List;
 
-public class AccountsAttachedResponseDto {
-    private List<Account> accounts;
+public class AccountsAttachedResponseDto implements AccountDispatchDto {
+    private List<AccountDto> accounts;
 
     private String error;
 
-    public AccountsAttachedResponseDto(List<Account> accounts) {
+    public AccountsAttachedResponseDto(List<AccountDto> accounts) {
         this.accounts = accounts;
     }
 
@@ -16,11 +16,11 @@ public class AccountsAttachedResponseDto {
         this.error = error;
     }
 
-    public List<Account> getAccounts() {
+    public List<AccountDto> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(List<Account> accounts) {
+    public void setAccounts(List<AccountDto> accounts) {
         this.accounts = accounts;
     }
 

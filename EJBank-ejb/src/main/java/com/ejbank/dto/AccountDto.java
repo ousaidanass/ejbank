@@ -3,7 +3,7 @@ package com.ejbank.dto;
 
 import java.math.BigDecimal;
 
-public class Account {
+public class AccountDto implements AccountDispatchDto {
 
     private Long id;
     private String user;
@@ -11,7 +11,7 @@ public class Account {
     private BigDecimal amount;
     private Integer validation;
 
-    public Account() {
+    public AccountDto() {
     }
 
     public Long getId() {
