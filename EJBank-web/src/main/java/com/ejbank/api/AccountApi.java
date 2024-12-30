@@ -1,9 +1,7 @@
 package com.ejbank.api;
 
 import com.ejbank.bean.AccountBeanLocal;
-import com.ejbank.bean.UserBeanLocal;
 import com.ejbank.dto.AccountsAttachedResponseDto;
-import com.ejbank.dto.UserResponseDto;
 import com.ejbank.exception.ErrorMessages;
 import com.ejbank.exception.TraitementException;
 
@@ -35,7 +33,7 @@ public class AccountApi {
             System.err.println("AccountsAttached: " + accounts);
             return accounts;
         } catch (TraitementException e) {
-            return new AccountsAttachedResponseDto(ErrorMessages.getErrorMessage(e.getCode()));
+            return new AccountsAttachedResponseDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }
     }
 }

@@ -30,7 +30,7 @@ public class UserApi {
             response = userBeanLocal.getUser(userId);
             return response;
         } catch (TraitementException e) {
-            return new UserResponseDto(ErrorMessages.getErrorMessage(e.getCode()));
+            return new UserResponseDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }
     }
 }
