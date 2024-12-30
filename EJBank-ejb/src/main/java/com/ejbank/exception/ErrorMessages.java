@@ -8,6 +8,7 @@ public class ErrorMessages {
 
     static {
         messages.put(ErrorIdentifier.USER_NOT_FOUND, "Utilisateur non trouvé");
+        messages.put(ErrorIdentifier.USER_IS_NOT_A_CUSTOMER, "Utilisateur n'est pas un client");
     }
 
     /**

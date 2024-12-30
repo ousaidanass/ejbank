@@ -2,6 +2,7 @@ package com.ejbank.api;
 
 import com.ejbank.bean.AccountBeanLocal;
 import com.ejbank.dto.AccountsAttachedResponseDto;
+import com.ejbank.dto.AccountsResponceDto;
 import com.ejbank.exception.ErrorMessages;
 import com.ejbank.exception.TraitementException;
 
@@ -34,6 +35,16 @@ public class AccountApi {
             return accounts;
         } catch (TraitementException e) {
             return new AccountsAttachedResponseDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
+        }
+    }
+
+    @GET
+    @Path("/{user_id}")
+    public AccountsResponceDto getAccounts(@PathParam("user_id") Long userId) {
+        try {
+            return accountBeanLocal.getAccounts(userId);
+        } catch (TraitementException e) {
+            return new AccountsResponceDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }
     }
 }

@@ -1,37 +1,26 @@
 package com.ejbank.dto;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 public class AccountsResponceDto {
-    private int accountId;
-    private String accountType;
-    private BigDecimal balance;
-    private String error;
+    private List<AccountResponseDto> accounts;
+    private final String error;
 
-    public AccountsResponceDto(int accountId, String accountType, BigDecimal balance) {
-        accountId = accountId;
-        accountType = accountType;
-        balance = balance;
-        error = null;
+    public AccountsResponceDto(List<AccountResponseDto> accounts) {
+        this.accounts = Objects.requireNonNull(accounts);
+        this.error = null;
     }
 
     public AccountsResponceDto(String error) {
         this.error = error;
     }
 
-    public int getAccountId() {
-        return accountId;
-    }
-
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
     public String getError() {
         return error;
+    }
+
+    public List<AccountResponseDto> getAccounts() {
+        return accounts;
     }
 }

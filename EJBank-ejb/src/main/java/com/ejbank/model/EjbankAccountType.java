@@ -24,4 +24,7 @@ public class EjbankAccountType {
     public EjbankAccountType() {
     }
 
+    public String getName() {
+        return name;
+    }
 }

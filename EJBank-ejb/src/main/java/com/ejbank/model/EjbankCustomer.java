@@ -2,6 +2,7 @@ package com.ejbank.model;
 
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "ejbank_customer")
@@ -11,6 +12,9 @@ public class EjbankCustomer extends EjbankUser {
     @ManyToOne
     @JoinColumn(name = "advisor_id", nullable = false)
     private EjbankAdvisor ejbankAdvisor;
+
+    @OneToMany(mappedBy = "customer")
+    private Set<EjbankAccount> accounts;
 
     public EjbankCustomer() {
     }
@@ -28,5 +32,13 @@ public class EjbankCustomer extends EjbankUser {
         return "EjbankCustomer{" +
                 "ejbankAdvisor=" + ejbankAdvisor +
                 '}';
+    }
+
+    public Set<EjbankAccount> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<EjbankAccount> accounts) {
+        this.accounts = accounts;
     }
 }
