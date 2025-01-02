@@ -3,6 +3,10 @@ package com.ejbank.bean.impl;
 import com.ejbank.bean.AccountBeanLocal;
 import com.ejbank.bean.BeanRequestAssertion;
 import com.ejbank.dto.*;
+import com.ejbank.dto.account.AccountDto;
+import com.ejbank.dto.account.AccountResponseDto;
+import com.ejbank.dto.account.AccountsAttachedResponseDto;
+import com.ejbank.dto.account.AccountsResponceDto;
 import com.ejbank.exception.ErrorIdentifier;
 import com.ejbank.exception.TraitementException;
 import com.ejbank.model.EjbankUser;
@@ -48,14 +52,14 @@ public class AccountBeanImpl implements AccountBeanLocal {
         if (beanRequestAssertion.isAdvisor(user)) {
             throw new TraitementException(ErrorIdentifier.USER_IS_NOT_A_CUSTOMER);
         }
-        var accounts = new ArrayList<AccountResponseDtoDto>();
+        var accounts = new ArrayList<AccountResponseDto>();
         var customers = beanRequestAssertion.getUserCustomers(user, id).orElse(null);
         if (customers == null) {
             throw new TraitementException(ErrorIdentifier.USER_NOT_FOUND);
         }
         for (var customer : customers) {
             customer.getAccounts().forEach(account -> {
-                accounts.add(new AccountResponseDtoDto(
+                accounts.add(new AccountResponseDto(
                         account.getId(),
                         account.getAccountType().getName(),
                         account.getBalance()

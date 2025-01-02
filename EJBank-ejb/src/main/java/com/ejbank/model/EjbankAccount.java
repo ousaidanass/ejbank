@@ -37,4 +37,8 @@ public class EjbankAccount {
     public EjbankAccountType getAccountType() {
         return accountType;
     }
+
+    public EjbankUser getCustomer() {
+        return this.ejbankCustomer;
+    }
 }

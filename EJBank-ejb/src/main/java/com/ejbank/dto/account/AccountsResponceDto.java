@@ -1,13 +1,15 @@
-package com.ejbank.dto;
+package com.ejbank.dto.account;
+
+import com.ejbank.dto.AccountDispatchDto;
 
 import java.util.List;
 import java.util.Objects;
 
 public class AccountsResponceDto implements AccountDispatchDto {
-    private List<AccountResponseDtoDto> accounts;
+    private List<AccountResponseDto> accounts;
     private final String error;
 
-    public AccountsResponceDto(List<AccountResponseDtoDto> accounts) {
+    public AccountsResponceDto(List<AccountResponseDto> accounts) {
         this.accounts = Objects.requireNonNull(accounts);
         this.error = null;
     }
@@ -20,7 +22,7 @@ public class AccountsResponceDto implements AccountDispatchDto {
         return error;
     }
 
-    public List<AccountResponseDtoDto> getAccounts() {
+    public List<AccountResponseDto> getAccounts() {
         return accounts;
     }
 }

@@ -2,8 +2,8 @@ package com.ejbank.api;
 
 import com.ejbank.bean.AccountBeanLocal;
 import com.ejbank.dto.AccountDispatchDto;
-import com.ejbank.dto.AccountsAttachedResponseDto;
-import com.ejbank.dto.AccountsResponceDto;
+import com.ejbank.dto.account.AccountsAttachedResponseDto;
+import com.ejbank.dto.account.AccountsResponceDto;
 import com.ejbank.exception.ErrorMessages;
 import com.ejbank.exception.TraitementException;
 

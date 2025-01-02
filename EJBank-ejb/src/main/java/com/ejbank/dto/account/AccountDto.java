@@ -1,5 +1,7 @@
-package com.ejbank.dto;
+package com.ejbank.dto.account;
 
+
+import com.ejbank.dto.AccountDispatchDto;
 
 import java.math.BigDecimal;
 
