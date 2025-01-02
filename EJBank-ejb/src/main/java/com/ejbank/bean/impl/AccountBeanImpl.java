@@ -29,6 +29,7 @@ public class AccountBeanImpl implements AccountBeanLocal {
 
     @Override
     public AccountDispatchDto getAccountsAttached(long id) throws TraitementException {
+        /*
         var user = em.createQuery("SELECT " +
                 "account.id as id, " +
                 "CONCAT(user.firstname, ' ', user.lastname, '(', user.login, ')') as user, " +
@@ -44,6 +45,9 @@ public class AccountBeanImpl implements AccountBeanLocal {
                 "GROUP BY account.id, user.firstname, user.lastname, user.login, accountType.name, account.balance", AccountDto.class);
         var result = user.getResultList();
         return new AccountsAttachedResponseDto(result);
+
+         */
+        return null;
     }
 
     @Override

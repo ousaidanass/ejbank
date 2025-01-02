@@ -22,7 +22,7 @@ public class EjbankTransaction {
     private EjbankAccount accountFrom;
 
     @ManyToOne
-    @Column(name = "author")
+    @JoinColumn(name = "author")
     private EjbankUser author;
 
     @Column(name = "amount", precision = 10, scale = 0)

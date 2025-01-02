@@ -13,7 +13,7 @@ public class EjbankCustomer extends EjbankUser {
     @JoinColumn(name = "advisor_id", nullable = false)
     private EjbankAdvisor ejbankAdvisor;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "ejbankCustomer")
     private Set<EjbankAccount> accounts;
 
     public EjbankCustomer() {
