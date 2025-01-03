@@ -32,8 +32,8 @@ public class AccountBeanImpl implements AccountBeanLocal {
         var request = em.createQuery(
         "SELECT new com.ejbank.dto.account.AccountDto("
         + "account.id,"
-        + "CONCAT(user.firstname, ' ', user.lastname, '(', user.login, ')'), "
-        + "accountType.name, "
+        + "CONCAT(user.firstname, ' ', user.lastname, ' (', user.login, ')'), "
+        + "CONCAT('Label du compte (', accountType.name, ')'), "
         + "account.balance, "
         + "SUM(CASE WHEN transaction.applied = true THEN 1 ELSE 0 END))"
         + "FROM EjbankUser user "
