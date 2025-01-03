@@ -28,26 +28,26 @@ public class AccountBeanImpl implements AccountBeanLocal {
     private BeanRequestAssertion beanRequestAssertion;
 
     @Override
-    public AccountDispatchDto getAccountsAttached(long id) throws TraitementException {
-        /*
-        var user = em.createQuery("SELECT " +
-                "account.id as id, " +
-                "CONCAT(user.firstname, ' ', user.lastname, '(', user.login, ')') as user, " +
-                "accountType.name as typee, " +
-                "account.balance as amount, " +
-                "COUNT(transaction.applied) as validation " +
-                "FROM EjbankUser user "
+    public AccountsAttachedResponseDto getAccountsAttached(long id) throws TraitementException {
+        var request = em.createQuery(
+        "SELECT new com.ejbank.dto.account.AccountDto("
+        + "account.id,"
+        + "CONCAT(user.firstname, ' ', user.lastname, '(', user.login, ')'), "
+        + "accountType.name, "
+        + "account.balance, "
+        + "SUM(CASE WHEN transaction.applied = true THEN 1 ELSE 0 END))"
+        + "FROM EjbankUser user "
         + "JOIN EjbankCustomer customer ON user.id = customer.id "
-        + "JOIN EjbankAccount account ON user.id = account.id "
-        + "JOIN EjbankTransaction transaction ON account.id = transaction.id "
-        + "JOIN EjbankAccountType accountType ON account.id = transaction.accountType.id "
-        + "WHERE customer.ejbankAdvisor.id = :id " +
-                "GROUP BY account.id, user.firstname, user.lastname, user.login, accountType.name, account.balance", AccountDto.class);
-        var result = user.getResultList();
+        + "JOIN EjbankAccount account ON customer.id = account.ejbankCustomer.id "
+        + "JOIN EjbankTransaction transaction ON account.id = transaction.accountFrom.id "
+        + "JOIN EjbankAccountType accountType ON account.accountType.id = accountType.id "
+        + "WHERE user.id = :id "
+        + "GROUP BY account.id, user.firstname, user.lastname, user.login, accountType.name, account.balance"
+        , AccountDto.class);
+        request.setParameter("id", id);
+        var result = request.getResultList();
+        System.err.println("Accounts attached result: " + result);
         return new AccountsAttachedResponseDto(result);
-
-         */
-        return null;
     }
 
     @Override

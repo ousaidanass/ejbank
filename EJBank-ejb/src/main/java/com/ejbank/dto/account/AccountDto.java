@@ -11,9 +11,17 @@ public class AccountDto implements AccountDispatchDto {
     private String user;
     private String type;
     private BigDecimal amount;
-    private Integer validation;
+    private Long validation;
 
     public AccountDto() {
+    }
+
+    public AccountDto(Long id, String user, String type, BigDecimal amount, Long validation) {
+        this.id = id;
+        this.user = user;
+        this.type = type;
+        this.amount = amount;
+        this.validation = validation;
     }
 
     public Long getId() {
@@ -48,17 +56,17 @@ public class AccountDto implements AccountDispatchDto {
         this.amount = amount;
     }
 
-    public Integer getValidation() {
+    public Long getValidation() {
         return validation;
     }
 
-    public void setValidation(Integer validation) {
+    public void setValidation(Long validation) {
         this.validation = validation;
     }
 
     @Override
     public String toString() {
-        return "AccountsAttachedResponseDto{" +
+        return "AccountDto{" +
                 "id=" + id +
                 ", user='" + user + '\'' +
                 ", type='" + type + '\'' +

@@ -25,9 +25,9 @@ public class AccountApi {
 
     @GET
     @Path("/attached/{user_id}")
-    public AccountDispatchDto getAccountsAttached(@PathParam("user_id") Long userId) {
+    public AccountsAttachedResponseDto getAccountsAttached(@PathParam("user_id") Long userId) {
 
-        AccountDispatchDto accounts = null;
+        AccountsAttachedResponseDto accounts = null;
 
         try {
             System.err.println("UserId AccountsAttached: " + userId);
