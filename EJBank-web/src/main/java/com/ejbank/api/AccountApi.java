@@ -26,12 +26,9 @@ public class AccountApi {
     @GET
     @Path("/attached/{user_id}")
     public AccountsAttachedResponseDto getAccountsAttached(@PathParam("user_id") Long userId) {
-
-        AccountsAttachedResponseDto accounts = null;
-
         try {
             System.err.println("UserId AccountsAttached: " + userId);
-            accounts = accountBeanLocal.getAccountsAttached(userId);
+            var accounts = accountBeanLocal.getAccountsAttached(userId);
             System.err.println("AccountsAttached: " + accounts);
             return accounts;
         } catch (TraitementException e) {

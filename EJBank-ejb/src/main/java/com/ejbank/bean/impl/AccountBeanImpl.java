@@ -3,12 +3,12 @@ package com.ejbank.bean.impl;
 import com.ejbank.bean.AccountBeanLocal;
 import com.ejbank.bean.BeanRequestAssertion;
 import com.ejbank.dto.*;
-import com.ejbank.dto.account.AccountDto;
-import com.ejbank.dto.account.AccountResponseDto;
-import com.ejbank.dto.account.AccountsAttachedResponseDto;
-import com.ejbank.dto.account.AccountsResponceDto;
+import com.ejbank.dto.account.*;
 import com.ejbank.exception.ErrorIdentifier;
 import com.ejbank.exception.TraitementException;
+import com.ejbank.model.EjbankAccount;
+import com.ejbank.model.EjbankAdvisor;
+import com.ejbank.model.EjbankCustomer;
 import com.ejbank.model.EjbankUser;
 
 import javax.ejb.EJB;
@@ -16,6 +16,7 @@ import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 @Stateless
@@ -77,6 +78,28 @@ public class AccountBeanImpl implements AccountBeanLocal {
     public AccountDispatchDto getAllAccounts(long id) throws TraitementException {
         var user = em.find(EjbankUser.class, id);
         return beanRequestAssertion.isAdvisor(user) ? getAccountsAttached(id) : getAccounts(id);
+    }
+
+    @Override
+    public AccountDetailResponseDto getAccountDetail(long accountId, long userId) throws TraitementException {
+        var customer = em.find(EjbankCustomer.class, userId);
+        if (customer == null) {
+            throw new TraitementException(ErrorIdentifier.CUSTOMER_NOT_FOUND);
+        }
+        var account = em.find(EjbankAccount.class, accountId);
+        if (account == null) {
+            throw new TraitementException(ErrorIdentifier.ACCOUNT_NOT_FOUND);
+        }
+        if (customer.getAccounts().contains(account)) {
+            var advisor = customer.getEjbankAdvisor();
+            var accountType = account.getAccountType();
+            return new AccountDetailResponseDto(customer.getFirstname() + " " + customer.getLastname() + " (client)",
+                    advisor.getFirstname() + " " + advisor.getLastname() + " (conseillé)",
+                    accountType.getRate(), accountType.getRate().divide(BigDecimal.valueOf(100)).multiply(account.getBalance()),
+                    account.getBalance());
+        } else {
+            throw new TraitementException(ErrorIdentifier.ACCOUNT_NOT_ASSIGNED_TO_CUSTOMER);
+        }
     }
 
 }

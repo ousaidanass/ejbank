@@ -27,4 +27,16 @@ public class EjbankAccountType {
     public String getName() {
         return name;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public BigDecimal getRate() {
+        return rate;
+    }
+
+    public Integer getOverdraft() {
+        return overdraft;
+    }
 }
