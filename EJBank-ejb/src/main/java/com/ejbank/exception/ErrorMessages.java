@@ -10,6 +10,9 @@ public class ErrorMessages {
         messages.put(ErrorIdentifier.USER_NOT_FOUND, "Utilisateur non trouvé");
         messages.put(ErrorIdentifier.ACCOUNT_NOT_FOUND, "Compte non trouvé");
         messages.put(ErrorIdentifier.CUSTOMER_NOT_FOUND, "Client non trouvé");
+        messages.put(ErrorIdentifier.TRANSACTION_TO_SAME_SOURCE, "Impossible de faire une transaction vers le meme compte");
+        messages.put(ErrorIdentifier.SOURCE_ACCOUNT_NOT_FOUND, "Le compte source non trouvé");
+        messages.put(ErrorIdentifier.DESTINATION_ACCOUNT_NOT_FOUND, "Le compte destinataire non trouvé");
         messages.put(ErrorIdentifier.USER_IS_NOT_A_CUSTOMER, "Utilisateur n'est pas un client");
         messages.put(ErrorIdentifier.ACCOUNT_NOT_ASSIGNED_TO_ADVISOR, "Ce compte n'est pas assigné à ce conseillers");
         messages.put(ErrorIdentifier.ACCOUNT_NOT_ASSIGNED_TO_CUSTOMER, "Ce compte n'est pas assigné à ce client");

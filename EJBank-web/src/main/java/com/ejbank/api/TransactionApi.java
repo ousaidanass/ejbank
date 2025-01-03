@@ -1,6 +1,9 @@
 package com.ejbank.api;
 
 import com.ejbank.bean.TransactionBean;
+import com.ejbank.dto.account.AccountDetailResponseDto;
+import com.ejbank.dto.transaction.TransactionPreviewRequestDto;
+import com.ejbank.dto.transaction.TransactionPreviewResponseDto;
 import com.ejbank.dto.transaction.TransactionsDto;
 import com.ejbank.exception.ErrorMessages;
 import com.ejbank.exception.TraitementException;
@@ -23,6 +26,20 @@ public class TransactionApi {
             return transactionBean.getTransactionList(userId, accountId, offset);
         } catch (TraitementException e) {
             return new TransactionsDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
+        }
+    }
+
+    @POST
+    @Path("/preview")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public TransactionPreviewResponseDto previewTransaction(TransactionPreviewRequestDto requestDto) {
+        try {
+            System.err.println("Api previewTransaction called with transactionRequest='" + requestDto + "'");
+            var transactionPreview = transactionBean.previewTransaction(requestDto);
+            System.err.println("Transaction preview: " + transactionPreview);
+            return transactionPreview;
+        } catch (TraitementException e) {
+            return new TransactionPreviewResponseDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }
     }
 }
