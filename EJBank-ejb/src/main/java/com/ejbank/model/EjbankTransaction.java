@@ -71,4 +71,8 @@ public class EjbankTransaction {
     public Date getDate() {
         return date;
     }
+
+    public void setApplied(Boolean applied) {
+        this.applied = applied;
+    }
 }

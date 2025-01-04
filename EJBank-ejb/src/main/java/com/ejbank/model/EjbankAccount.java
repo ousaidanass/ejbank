@@ -41,4 +41,8 @@ public class EjbankAccount {
     public EjbankUser getCustomer() {
         return this.ejbankCustomer;
     }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
 }

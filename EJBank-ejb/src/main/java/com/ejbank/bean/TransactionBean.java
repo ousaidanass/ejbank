@@ -1,8 +1,6 @@
 package com.ejbank.bean;
 
-import com.ejbank.dto.transaction.TransactionPreviewRequestDto;
-import com.ejbank.dto.transaction.TransactionPreviewResponseDto;
-import com.ejbank.dto.transaction.TransactionsDto;
+import com.ejbank.dto.transaction.*;
 import com.ejbank.exception.TraitementException;
 
 import javax.ejb.Local;
@@ -13,4 +11,6 @@ public interface TransactionBean {
     TransactionsDto getTransactionList(long userId, long accountId, int offset) throws TraitementException;
 
     TransactionPreviewResponseDto previewTransaction(TransactionPreviewRequestDto requestDto) throws TraitementException;
+
+    TransactionValidationResponseDto validateTransaction(TransactionValidationRequestDto requestDto) throws TraitementException;
 }
