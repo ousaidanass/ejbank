@@ -1,11 +1,9 @@
 package com.ejbank.dto.account;
 
 
-import com.ejbank.dto.AccountDispatchDto;
-
 import java.util.List;
 
-public class AccountsAttachedResponseDto implements AccountDispatchDto {
+public class AccountsAttachedResponseDto {
     private List<AccountDto> accounts;
 
     private String error;

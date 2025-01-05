@@ -2,11 +2,11 @@ package com.ejbank.bean.impl;
 
 import com.ejbank.bean.BeanRequestAssertion;
 import com.ejbank.bean.TransactionBean;
-import com.ejbank.dto.TransactionDispatchDto;
 import com.ejbank.dto.transaction.*;
 import com.ejbank.exception.ErrorIdentifier;
 import com.ejbank.exception.TraitementException;
 import com.ejbank.model.EjbankAccount;
+import com.ejbank.model.EjbankAdvisor;
 import com.ejbank.model.EjbankTransaction;
 import com.ejbank.model.EjbankUser;
 
@@ -17,8 +17,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.sql.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Stateless
 @LocalBean
@@ -37,7 +38,7 @@ public class TransactionBeanImpl implements TransactionBean {
     }
 
     @Override
-    public TransactionsDto getTransactionList(long userId, long accountId, int offset) throws TraitementException {
+    public TransactionsResponseDto<TransactionResponseDto> getTransactionList(long userId, long accountId, int offset) throws TraitementException {
         var user = em.find(EjbankUser.class, userId);
 
         var invalidProcess = beanRequestAssertion.isInvalidUserAccount(accountId, userId, user);
@@ -45,47 +46,45 @@ public class TransactionBeanImpl implements TransactionBean {
             throw new TraitementException(invalidProcess.get());
         }
 
+        var queryCount = em.createQuery(
+                "SELECT count(t) FROM EjbankTransaction t " +
+                        "WHERE t.accountFrom.id = :accountId ORDER BY t.date DESC"
+        );
+        queryCount.setParameter("accountId", accountId);
+        Long total = (Long) queryCount.getSingleResult();
+
         var query = em.createQuery(
                 "SELECT t FROM EjbankTransaction t " +
-                        "WHERE (t.accountFrom.id = " + accountId + " " +
-                        "OR t.accountTo.id = " + accountId + " ) " +
-                        "ORDER BY t.date DESC"
+                        "WHERE t.accountFrom.id = :accountId ORDER BY t.date DESC"
         );
+        query.setParameter("accountId", accountId);
+        query.getMaxResults();
         query.setFirstResult(offset);
         query.setMaxResults(PAGINATION);
         List<EjbankTransaction> transactions = query.getResultList();
 
-        query = em.createQuery("SELECT COUNT(t) FROM EjbankTransaction t WHERE t.accountFrom.id = " + accountId);
-        var total = (int) query.getSingleResult();
-
-        var transactionDtos = new ArrayList<TransactionDispatchDto>();
-        for (EjbankTransaction transaction : transactions) {
-            var state = transaction.getApplied() ? TransactionState.APPLIED : beanRequestAssertion.isAdvisor(user) ? TransactionState.TO_APPROVE : TransactionState.WAITING_APPROVE;
-            var parsedDto = transaction.getComment() == null || transaction.getComment().isEmpty() ?
-            new TransactionDto(
-                    transaction.getId(),
-                    transaction.getDate().toString(),
-                    transaction.getAccountFrom().getAccountType().getName(),
-                    transaction.getAccountTo().getAccountType().getName(),
-                    transaction.getAccountTo().getCustomer().getFirstname(),
-                    transaction.getAmount(),
-                    transaction.getAccountFrom().getCustomer().getFirstname(),
-                    state
-            ) :
-                    new CommentedTransactionDto(
-                            transaction.getId(),
-                            transaction.getDate().toString(),
-                            transaction.getAccountFrom().getAccountType().getName(),
-                            transaction.getAccountTo().getAccountType().getName(),
-                            transaction.getAccountTo().getCustomer().getFirstname(),
-                            transaction.getAmount(),
-                            transaction.getAccountFrom().getCustomer().getFirstname(),
-                            transaction.getComment(),
-                            state
+        var mapped = transactions.stream().map( t -> {
+                    TransactionState state;
+                    if (Objects.requireNonNull(t.getApplied()) == Boolean.FALSE) {
+                        state = user instanceof EjbankAdvisor ?
+                                TransactionState.TO_APPROVE : TransactionState.WAITING_APPROVE;
+                    } else {
+                        state = TransactionState.APPLIED;
+                    }
+                    return new TransactionResponseDto(
+                            t.getId(),
+                            t.getDate().toString(),
+                            t.getAccountFrom().getAccountType().getName(),
+                            t.getAccountTo().getAccountType().getName(),
+                            t.getAccountTo().getCustomer().getFirstname(),
+                            t.getAmount(),
+                            t.getAccountFrom().getCustomer().getFirstname(),
+                            t.getComment(),
+                            state.toString()
                     );
-            transactionDtos.add(parsedDto);
-        }
-        return new TransactionsDto(total, transactionDtos);
+                }
+        ).toList();
+        return new TransactionsResponseDto<>(total, mapped);
     }
 
     @Override
@@ -109,6 +108,13 @@ public class TransactionBeanImpl implements TransactionBean {
         var before = transaction.getAccountFrom().getBalance();
         var after = before.subtract(transaction.getAmount());
         return after.compareTo(BigDecimal.valueOf(-transaction.getAccountFrom().getAccountType().getOverdraft())) >= 0;
+    }
+
+    private boolean isTransactionValide(EjbankAccount account, BigDecimal amount) {
+        var before = account.getBalance()
+                .add(BigDecimal.valueOf(account.getAccountType().getOverdraft()));
+        System.err.println(before + " " + amount);
+        return before.compareTo(amount) >= 0;
     }
 
     @Override
@@ -152,5 +158,60 @@ public class TransactionBeanImpl implements TransactionBean {
             em.remove(transaction);
             return new TransactionValidationResponseDto(false, "Transaction supprimer");
         }
+    }
+
+    @Override
+    public String getPendingTransactionCount(long userId) throws TraitementException {
+        var user = em.find(EjbankUser.class, userId);
+        var isAdvisor = user instanceof EjbankAdvisor;
+
+        var query = em.createQuery(
+                "SELECT count(t.id) " +
+                        "from EjbankCustomer c " +
+                        "inner join EjbankAccount a on c.id=a.ejbankCustomer.id " +
+                        "inner join EjbankTransaction t ON a.id=t.accountFrom.id " +
+                        "WHERE "+ (isAdvisor?"c.ejbankAdvisor.id":"c.id")+" = :userId " +
+                        "and t.applied=false and abs(t.amount) >= 1000"
+        );
+        query.setParameter("userId", userId);
+        return query.getSingleResult().toString();
+    }
+
+    private long getNextId() {
+        Long maxId = em.createQuery(
+                "SELECT COALESCE(MAX(e.id), 0) FROM EjbankTransaction e", Long.class
+        ).getSingleResult();
+        return maxId + 1;
+    }
+
+    @Override
+    @Transactional
+    public TransactionValidationResponseDto applyTransaction(TransactionApplyDto request) throws TraitementException {
+
+        var user = em.find(EjbankUser.class, request.getAuthor());
+        EjbankAccount sourceAccount = em.find(EjbankAccount.class, request.getSource());
+        EjbankAccount destinationAccount = em.find(EjbankAccount.class, request.getDestination());
+
+        var valid = beanRequestAssertion.isInvalidUserAccount(request.getSource(), request.getAuthor(),user);
+        if(valid.isPresent()){
+            throw new TraitementException(valid.get());
+        }
+        if(!isTransactionValide(sourceAccount,request.getAmount())){
+            throw new TraitementException(ErrorIdentifier.TRANSACTION_REFUSED);
+        }
+
+
+        EjbankTransaction transaction = new EjbankTransaction();
+        transaction.setId(getNextId());
+        transaction.setAccountFrom(sourceAccount);
+        transaction.setAccountTo(destinationAccount);
+        transaction.setAmount(request.getAmount());
+        transaction.setAuthor(user);
+        transaction.setDate(new Date(System.currentTimeMillis()));
+        transaction.setApplied(false);
+        em.persist(transaction);
+
+        return new TransactionValidationResponseDto(true, "transaction valide");
+
     }
 }

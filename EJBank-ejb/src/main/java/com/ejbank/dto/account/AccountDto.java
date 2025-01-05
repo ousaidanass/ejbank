@@ -1,11 +1,9 @@
 package com.ejbank.dto.account;
 
 
-import com.ejbank.dto.AccountDispatchDto;
-
 import java.math.BigDecimal;
 
-public class AccountDto implements AccountDispatchDto {
+public class AccountDto {
 
     private Long id;
     private String user;

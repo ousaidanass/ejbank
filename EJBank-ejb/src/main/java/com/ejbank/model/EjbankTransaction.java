@@ -75,4 +75,28 @@ public class EjbankTransaction {
     public void setApplied(Boolean applied) {
         this.applied = applied;
     }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setAccountFrom(EjbankAccount accountFrom) {
+        this.accountFrom = accountFrom;
+    }
+
+    public void setAccountTo(EjbankAccount accountTo) {
+        this.accountTo = accountTo;
+    }
+
+    public void setAuthor(EjbankUser author) {
+        this.author = author;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }

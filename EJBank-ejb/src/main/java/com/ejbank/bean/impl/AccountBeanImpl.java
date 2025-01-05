@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 @Stateless
 @LocalBean
@@ -52,9 +53,9 @@ public class AccountBeanImpl implements AccountBeanLocal {
     }
 
     @Override
-    public AccountDispatchDto getAccounts(long id) throws TraitementException {
+    public List<AccountResponseDto> getAccounts(long id) throws TraitementException {
         var user = em.find(EjbankUser.class, id);
-        if (beanRequestAssertion.isAdvisor(user)) {
+        if (user instanceof EjbankAdvisor) {
             throw new TraitementException(ErrorIdentifier.USER_IS_NOT_A_CUSTOMER);
         }
         var accounts = new ArrayList<AccountResponseDto>();
@@ -71,13 +72,28 @@ public class AccountBeanImpl implements AccountBeanLocal {
                 ));
             });
         }
-        return new AccountsResponceDto(accounts);
+        return accounts;
     }
 
     @Override
-    public AccountDispatchDto getAllAccounts(long id) throws TraitementException {
-        var user = em.find(EjbankUser.class, id);
-        return beanRequestAssertion.isAdvisor(user) ? getAccountsAttached(id) : getAccounts(id);
+    public List<AccountAdvisorResponseDto> getAllAccounts(long id) throws TraitementException {
+        var user = em.find(EjbankAdvisor.class, id);
+        var accounts = new ArrayList<AccountAdvisorResponseDto>();
+        var customers = beanRequestAssertion.getUserCustomers(user, id).orElse(null);
+        if (customers == null) {
+            throw new TraitementException(ErrorIdentifier.USER_NOT_FOUND);
+        }
+        for (var customer : customers) {
+            customer.getAccounts().forEach(account -> {
+                accounts.add(new AccountAdvisorResponseDto(
+                        account.getId(),
+                        account.getCustomer().getNameString(),
+                        account.getAccountType().getName(),
+                        account.getBalance()
+                ));
+            });
+        }
+        return accounts;
     }
 
     @Override

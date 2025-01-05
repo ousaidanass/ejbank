@@ -1,29 +1,27 @@
 package com.ejbank.dto.account;
 
-import com.ejbank.dto.AccountDispatchDto;
-
 import java.math.BigDecimal;
 
-public class AccountResponseDto implements AccountDispatchDto {
-    private long accountId;
-    private String accountType;
-    private BigDecimal balance;
+public class AccountResponseDto  {
+    private final long id;
+    private final String type;
+    private final BigDecimal amount;
 
     public AccountResponseDto(long accountId, String accountType, BigDecimal balance) {
-        this.accountId = accountId;
-        this.accountType = accountType;
-        this.balance = balance;
+        this.id = accountId;
+        this.type = accountType;
+        this.amount = balance;
     }
 
-    public long getAccountId() {
-        return accountId;
+    public long getId() {
+        return id;
     }
 
-    public String getAccountType() {
-        return accountType;
+    public String getType() {
+        return type;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public BigDecimal getAmount() {
+        return amount;
     }
 }

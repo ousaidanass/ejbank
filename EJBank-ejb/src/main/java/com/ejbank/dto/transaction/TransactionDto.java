@@ -1,6 +1,6 @@
 package com.ejbank.dto.transaction;
 
-import com.ejbank.dto.TransactionDispatchDto;
+import liquibase.datatype.core.TinyIntType;
 
 import java.math.BigDecimal;
 
@@ -11,5 +11,5 @@ public record TransactionDto(long id,
                              String destination_user,
                              BigDecimal amount,
                              String author,
-                             TransactionState state) implements TransactionDispatchDto {
+                             TinyIntType state) {
 }

@@ -1,10 +1,7 @@
 package com.ejbank.dto.account;
 
 
-import com.ejbank.dto.AccountDispatchDto;
-
 import java.math.BigDecimal;
-import java.util.List;
 
 public class AccountDetailResponseDto {
     private String owner;

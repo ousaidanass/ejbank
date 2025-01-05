@@ -1,9 +1,10 @@
 package com.ejbank.api;
 
 import com.ejbank.bean.AccountBeanLocal;
-import com.ejbank.dto.AccountDispatchDto;
+import com.ejbank.dto.account.AccountAdvisorResponseDto;
+import com.ejbank.dto.account.AccountResponseDto;
 import com.ejbank.dto.account.AccountsAttachedResponseDto;
-import com.ejbank.dto.account.AccountsResponceDto;
+import com.ejbank.dto.account.AccountsResponseDto;
 import com.ejbank.exception.ErrorMessages;
 import com.ejbank.exception.TraitementException;
 
@@ -38,21 +39,21 @@ public class AccountApi {
 
     @GET
     @Path("/{user_id}")
-    public AccountDispatchDto getAccounts(@PathParam("user_id") Long userId) {
+    public AccountsResponseDto<AccountResponseDto> getAccounts(@PathParam("user_id") Long userId) {
         try {
-            return accountBeanLocal.getAccounts(userId);
+            return new AccountsResponseDto<>(accountBeanLocal.getAccounts(userId));
         } catch (TraitementException e) {
-            return new AccountsResponceDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
+            return new AccountsResponseDto<>(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }
     }
 
     @GET
     @Path("/all/{user_id}")
-    public AccountDispatchDto getAllAccounts(@PathParam("user_id") Long userId) {
+    public AccountsResponseDto<AccountAdvisorResponseDto> getAllAccounts(@PathParam("user_id") Long userId) {
         try {
-            return accountBeanLocal.getAllAccounts(userId);
+            return new AccountsResponseDto<>(accountBeanLocal.getAllAccounts(userId));
         } catch (TraitementException e) {
-            return new AccountsResponceDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
+            return new AccountsResponseDto<>(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }
     }
 }

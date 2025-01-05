@@ -17,18 +17,13 @@ public class BeanRequestAssertionImpl implements BeanRequestAssertion {
     @PersistenceContext(name = "EJBankDS")
     private EntityManager em;
 
-    public boolean isAdvisor(EjbankUser user) {
-        return user instanceof EjbankAdvisor;
-    }
-
-    public boolean isCustomer(EjbankUser user) {
-        return user instanceof EjbankCustomer;
-    }
     public Optional<List<EjbankCustomer>> getUserCustomers(EjbankUser user, long id) {
-        if (isAdvisor(user)) {
+        var adv = em.find(EjbankAdvisor.class, user.getId());
+        var ctm = em.find(EjbankCustomer.class, user.getId());
+        if (adv != null) {
             var advisor = em.find(EjbankAdvisor.class, id);
             return Optional.of(new ArrayList<>(advisor.getEjbankCustomers()));
-        } else if (isCustomer(user)) {
+        } else if (ctm != null) {
             return Optional.of(List.of(em.find(EjbankCustomer.class, id)));
         } else {
             return Optional.empty();
@@ -44,7 +39,7 @@ public class BeanRequestAssertionImpl implements BeanRequestAssertion {
         if (customers == null) {
             return Optional.of(ErrorIdentifier.USER_NOT_FOUND);
         }
-        if (isAdvisor(user)) {
+        if (user instanceof EjbankAdvisor) {
             account = customers.stream()
                     .map(EjbankCustomer::getAccounts)
                     .flatMap(Collection::stream)
@@ -54,15 +49,14 @@ public class BeanRequestAssertionImpl implements BeanRequestAssertion {
             if (account == null) {
                 return Optional.of(ErrorIdentifier.ACCOUNT_NOT_ASSIGNED_TO_ADVISOR);
             }
-        } else {
-            customer = customers.get(0);
-            account = customer.getAccounts().stream()
-                    .filter(acc -> acc.getId() == accountId)
-                    .findFirst()
-                    .orElse(null);
-            if (account == null) {
-                return Optional.of(ErrorIdentifier.ACCOUNT_NOT_ASSIGNED_TO_CUSTOMER);
-            }
+        }
+        customer = customers.get(0);
+        account = customer.getAccounts().stream()
+                .filter(acc -> acc.getId() == accountId)
+                .findFirst()
+                .orElse(null);
+        if (account == null) {
+            return Optional.of(ErrorIdentifier.ACCOUNT_NOT_ASSIGNED_TO_CUSTOMER);
         }
         return Optional.empty();
     }

@@ -92,6 +92,10 @@ public class EjbankUser {
         this.type = type;
     }
 
+    public String getNameString() {
+        return String.format("Prenom Nom (%s %s)", firstname, lastname);
+    }
+
     @Override
     public String toString() {
         return "EjbankUser{" +
@@ -104,4 +108,6 @@ public class EjbankUser {
                 ", type='" + type + '\'' +
                 '}';
     }
+
+
 }

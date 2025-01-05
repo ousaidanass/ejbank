@@ -12,18 +12,39 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/transaction")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
 public class TransactionApi {
     @EJB
     private TransactionBean transactionBean;
 
     @GET
     @Path("/list/{account_id}/{offset}/{user_id}")
-    public TransactionsDto userTransactions(@PathParam("account_id") Integer accountId, @PathParam("offset") Integer offset, @PathParam("user_id") Integer userId) {
+    public String userTransactions(@PathParam("account_id") Integer accountId, @PathParam("offset") Integer offset, @PathParam("user_id") Integer userId) {
         try {
-            return transactionBean.getTransactionList(userId, accountId, offset);
+            var response = transactionBean.getTransactionList(userId, accountId, offset);
+            return response.toString();
         } catch (TraitementException e) {
-            return new TransactionsDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
+            return new TransactionsResponseDto<>(ErrorMessages.getErrorMessage(e.getErrorIdentifier())).toString();
+        }
+    }
+
+    @GET
+    @Path("/validation/notification/{user_id}")
+    public String getPendingTransactions(@PathParam("user_id") Integer id){
+        try {
+            return transactionBean.getPendingTransactionCount(id);
+        } catch (TraitementException e) {
+            return ErrorMessages.getErrorMessage(e.getErrorIdentifier());
+        }
+    }
+
+    @POST
+    @Path("/apply")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public TransactionValidationResponseDto previewTransaction(TransactionApplyDto requestDto) {
+        try {
+            return transactionBean.applyTransaction(requestDto);
+        } catch (TraitementException e) {
+            return new TransactionValidationResponseDto(ErrorMessages.getErrorMessage(e.getErrorIdentifier()));
         }
     }
 

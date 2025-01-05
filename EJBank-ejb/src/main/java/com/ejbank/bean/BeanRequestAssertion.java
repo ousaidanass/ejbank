@@ -10,9 +10,6 @@ import java.util.Optional;
 
 @Local
 public interface BeanRequestAssertion {
-    boolean isAdvisor(EjbankUser user);
-    boolean isCustomer(EjbankUser user);
     Optional<List<EjbankCustomer>> getUserCustomers(EjbankUser user, long id);
-
     Optional<ErrorIdentifier> isInvalidUserAccount(long accountId, long userId, EjbankUser user);
 }
