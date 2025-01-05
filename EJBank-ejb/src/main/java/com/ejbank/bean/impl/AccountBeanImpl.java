@@ -2,7 +2,6 @@ package com.ejbank.bean.impl;
 
 import com.ejbank.bean.AccountBeanLocal;
 import com.ejbank.bean.BeanRequestAssertion;
-import com.ejbank.dto.*;
 import com.ejbank.dto.account.*;
 import com.ejbank.exception.ErrorIdentifier;
 import com.ejbank.exception.TraitementException;
@@ -52,6 +51,46 @@ public class AccountBeanImpl implements AccountBeanLocal {
         return new AccountsAttachedResponseDto(result);
     }
 
+    /**
+     * Retrieves all accounts associated with a user, including customer names and account details.
+     * This method supports both customers and advisors. If the user is an advisor, it retrieves the accounts of their managed customers.
+     * If the user is a customer, it retrieves their own accounts.
+     *
+     * @param id The unique identifier of the user (customer or advisor).
+     * @return A list of {@link AccountOverviewResponseDto} containing account details and associated customer information.
+     *
+     * @throws TraitementException If the user is not found or an error occurs during processing.
+     */
+    @Override
+    public List<AccountOverviewResponseDto> getAllAccounts(long id) throws TraitementException {
+        var user = em.find(EjbankUser.class, id);
+        var accounts = new ArrayList<AccountOverviewResponseDto>();
+        var customers = beanRequestAssertion.getUserCustomers(user, id).orElse(null);
+        if (customers == null) {
+            throw new TraitementException(ErrorIdentifier.USER_NOT_FOUND);
+        }
+        for (var customer : customers) {
+            customer.getAccounts().forEach(account -> {
+                accounts.add(new AccountOverviewResponseDto(
+                        account.getId(),
+                        account.getCustomer().getNameString(),
+                        account.getAccountType().getName(),
+                        account.getBalance()
+                ));
+            });
+        }
+        return accounts;
+    }
+
+    /**
+     * Retrieves a list of accounts associated with a customer.
+     * Only customers are allowed to access this information; if the user is an advisor, an exception is thrown.
+     *
+     * @param id The unique identifier of the user requesting their account information.
+     * @return A list of {@link AccountResponseDto} representing the user's accounts with account type and balance.
+     *
+     * @throws TraitementException If the user is not a customer or if the user is not found.
+     */
     @Override
     public List<AccountResponseDto> getAccounts(long id) throws TraitementException {
         var user = em.find(EjbankUser.class, id);
@@ -67,27 +106,6 @@ public class AccountBeanImpl implements AccountBeanLocal {
             customer.getAccounts().forEach(account -> {
                 accounts.add(new AccountResponseDto(
                         account.getId(),
-                        account.getAccountType().getName(),
-                        account.getBalance()
-                ));
-            });
-        }
-        return accounts;
-    }
-
-    @Override
-    public List<AccountAdvisorResponseDto> getAllAccounts(long id) throws TraitementException {
-        var user = em.find(EjbankAdvisor.class, id);
-        var accounts = new ArrayList<AccountAdvisorResponseDto>();
-        var customers = beanRequestAssertion.getUserCustomers(user, id).orElse(null);
-        if (customers == null) {
-            throw new TraitementException(ErrorIdentifier.USER_NOT_FOUND);
-        }
-        for (var customer : customers) {
-            customer.getAccounts().forEach(account -> {
-                accounts.add(new AccountAdvisorResponseDto(
-                        account.getId(),
-                        account.getCustomer().getNameString(),
                         account.getAccountType().getName(),
                         account.getBalance()
                 ));

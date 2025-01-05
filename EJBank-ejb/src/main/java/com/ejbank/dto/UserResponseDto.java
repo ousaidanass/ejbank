@@ -1,8 +1,5 @@
 package com.ejbank.dto;
 
-import java.util.Objects;
-
-
 public class UserResponseDto {
 
     private String firstname;

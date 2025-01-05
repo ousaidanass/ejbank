@@ -37,6 +37,18 @@ public class TransactionBeanImpl implements TransactionBean {
     public TransactionBeanImpl() throws NamingException {
     }
 
+    /**
+     * Retrieves a paginated list of transactions for a specific account.
+     * Validates the user's access to the account before processing.
+     *
+     * @param userId The unique identifier of the user requesting transactions.
+     * @param accountId The unique identifier of the account for which transactions are retrieved.
+     * @param offset The starting point for pagination.
+     *
+     * @return A {@link TransactionsResponseDto} containing the total count of transactions and a list of transaction details.
+     *
+     * @throws TraitementException If the user does not have access to the specified account or any other processing error occurs.
+     */
     @Override
     public TransactionsResponseDto<TransactionResponseDto> getTransactionList(long userId, long accountId, int offset) throws TraitementException {
         var user = em.find(EjbankUser.class, userId);
@@ -51,7 +63,7 @@ public class TransactionBeanImpl implements TransactionBean {
                         "WHERE t.accountFrom.id = :accountId ORDER BY t.date DESC"
         );
         queryCount.setParameter("accountId", accountId);
-        Long total = (Long) queryCount.getSingleResult();
+        var total = (Long) queryCount.getSingleResult();
 
         var query = em.createQuery(
                 "SELECT t FROM EjbankTransaction t " +
@@ -66,7 +78,7 @@ public class TransactionBeanImpl implements TransactionBean {
         var mapped = transactions.stream().map( t -> {
                     TransactionState state;
                     if (Objects.requireNonNull(t.getApplied()) == Boolean.FALSE) {
-                        state = user instanceof EjbankAdvisor ?
+                        state = (user instanceof EjbankAdvisor) ?
                                 TransactionState.TO_APPROVE : TransactionState.WAITING_APPROVE;
                     } else {
                         state = TransactionState.APPLIED;
@@ -117,6 +129,7 @@ public class TransactionBeanImpl implements TransactionBean {
         return before.compareTo(amount) >= 0;
     }
 
+
     @Override
     public TransactionValidationResponseDto validateTransaction(TransactionValidationRequestDto requestDto) throws TraitementException {
         var transaction = em.find(EjbankTransaction.class, requestDto.getTransaction());
@@ -160,6 +173,16 @@ public class TransactionBeanImpl implements TransactionBean {
         }
     }
 
+    /**
+     * Retrieves the count of pending transactions that require approval.
+     * For advisors, it counts transactions of their managed customers. For customers, it counts their own pending transactions.
+     *
+     * @param userId The unique identifier of the user (advisor or customer)
+     *               .
+     * @return A string representing the number of pending transactions.
+     *
+     * @throws TraitementException If the user is not found or other validation fails.
+     */
     @Override
     public String getPendingTransactionCount(long userId) throws TraitementException {
         var user = em.find(EjbankUser.class, userId);
@@ -178,19 +201,28 @@ public class TransactionBeanImpl implements TransactionBean {
     }
 
     private long getNextId() {
-        Long maxId = em.createQuery(
+        var maxId = em.createQuery(
                 "SELECT COALESCE(MAX(e.id), 0) FROM EjbankTransaction e", Long.class
         ).getSingleResult();
         return maxId + 1;
     }
 
+    /**
+     * Applies a new transaction between accounts if it passes all validation checks.
+     * The transaction is created but not immediately applied until later approval.
+     *
+     * @param request A {@link TransactionApplyDto} containing transaction details such as source, destination, and amount.
+     *
+     * @return A {@link TransactionValidationResponseDto} indicating if the transaction was successfully created and is valid.
+     *
+     * @throws TraitementException If the user does not have access to the source account, or if the transaction is invalid.
+     */
     @Override
     @Transactional
     public TransactionValidationResponseDto applyTransaction(TransactionApplyDto request) throws TraitementException {
-
         var user = em.find(EjbankUser.class, request.getAuthor());
-        EjbankAccount sourceAccount = em.find(EjbankAccount.class, request.getSource());
-        EjbankAccount destinationAccount = em.find(EjbankAccount.class, request.getDestination());
+        var sourceAccount = em.find(EjbankAccount.class, request.getSource());
+        var destinationAccount = em.find(EjbankAccount.class, request.getDestination());
 
         var valid = beanRequestAssertion.isInvalidUserAccount(request.getSource(), request.getAuthor(),user);
         if(valid.isPresent()){
@@ -200,8 +232,7 @@ public class TransactionBeanImpl implements TransactionBean {
             throw new TraitementException(ErrorIdentifier.TRANSACTION_REFUSED);
         }
 
-
-        EjbankTransaction transaction = new EjbankTransaction();
+        var transaction = new EjbankTransaction();
         transaction.setId(getNextId());
         transaction.setAccountFrom(sourceAccount);
         transaction.setAccountTo(destinationAccount);
@@ -212,6 +243,5 @@ public class TransactionBeanImpl implements TransactionBean {
         em.persist(transaction);
 
         return new TransactionValidationResponseDto(true, "transaction valide");
-
     }
 }

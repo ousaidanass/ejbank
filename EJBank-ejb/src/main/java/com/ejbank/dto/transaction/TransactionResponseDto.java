@@ -1,6 +1,5 @@
 package com.ejbank.dto.transaction;
 
-
 import java.math.BigDecimal;
 
 public record TransactionResponseDto(long id,

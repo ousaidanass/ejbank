@@ -1,8 +1,5 @@
 package com.ejbank.dto.transaction;
 
-
-import java.math.BigDecimal;
-
 public class TransactionValidationResponseDto {
     private Boolean result;
     private String message;

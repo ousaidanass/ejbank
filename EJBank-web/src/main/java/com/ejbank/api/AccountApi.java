@@ -1,7 +1,7 @@
 package com.ejbank.api;
 
 import com.ejbank.bean.AccountBeanLocal;
-import com.ejbank.dto.account.AccountAdvisorResponseDto;
+import com.ejbank.dto.account.AccountOverviewResponseDto;
 import com.ejbank.dto.account.AccountResponseDto;
 import com.ejbank.dto.account.AccountsAttachedResponseDto;
 import com.ejbank.dto.account.AccountsResponseDto;
@@ -37,6 +37,16 @@ public class AccountApi {
         }
     }
 
+    /**
+     * Web service to retrieve the accounts of a specific user.
+     *
+     * @param userId The unique identifier of the user whose accounts need to be fetched.
+     *
+     * @return An {@link AccountsResponseDto} object containing a list of user accounts or an error message.
+     *         If the user does not exist or a processing error occurs, the corresponding error message is returned.
+     *
+     * @throws TraitementException If a specific data processing error occurs.
+     */
     @GET
     @Path("/{user_id}")
     public AccountsResponseDto<AccountResponseDto> getAccounts(@PathParam("user_id") Long userId) {
@@ -47,9 +57,21 @@ public class AccountApi {
         }
     }
 
+    /**
+     * Web service to retrieve all accounts associated with a user, including customer and account details.
+     * This method supports both customers and advisors. For advisors, it retrieves accounts of their managed customers.
+     * For customers, it retrieves their own accounts.
+     *
+     * @param userId The unique identifier of the user (customer or advisor).
+     *
+     * @return An {@link AccountsResponseDto} object containing a list of account details,
+     *         or an error message if the user is not found or a processing failure occurs.
+     *
+     * @throws TraitementException If a specific processing error occurs, such as user not found.
+     */
     @GET
     @Path("/all/{user_id}")
-    public AccountsResponseDto<AccountAdvisorResponseDto> getAllAccounts(@PathParam("user_id") Long userId) {
+    public AccountsResponseDto<AccountOverviewResponseDto> getAllAccounts(@PathParam("user_id") Long userId) {
         try {
             return new AccountsResponseDto<>(accountBeanLocal.getAllAccounts(userId));
         } catch (TraitementException e) {
